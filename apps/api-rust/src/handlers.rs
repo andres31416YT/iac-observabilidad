@@ -13,6 +13,13 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use sqlx::PgPool;
 use tracing::{info, warn};
+use lazy_static::lazy_static;
+use prometheus::{IntGauge, Opts};
+
+lazy_static! {
+    static ref CPU_USAGE: IntGauge = 
+        prometheus::register_int_gauge!(Opts::new("cpu_load_percent", "CPU load percentage from load endpoint")).unwrap();
+}
 
 type JsonValue = serde_json::Value;
 type JsonVec = Vec<serde_json::Value>;
@@ -666,12 +673,16 @@ pub async fn load_cpu(
         "Starting CPU load test"
     );
 
+    CPU_USAGE.set(30);
+
     let start_time = std::time::Instant::now();
     let duration = std::time::Duration::from_secs(seconds);
     
     while start_time.elapsed() < duration {
         std::hint::spin_loop();
     }
+
+    CPU_USAGE.set(0);
 
     info!(
         event = "cpu_load_completed",

@@ -29,7 +29,7 @@ docker compose up -d --build
 | `/alerts`          | Webhook para alertas de Grafana    |
 
 ## Alertas configuradas
-- **HighCPULoad**: Dispara cuando CPU de lab-backend supera 50% por 1 minuto
+- **HighCPULoad**: Detecta cuando el endpoint `/load` es activado (métrica `cpu_load_percent`)
 
 ## Dashboards
 - **Laboratorio API**: Panel con CPU usage y logs del backend

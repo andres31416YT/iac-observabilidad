@@ -2,10 +2,10 @@ groups:
 - name: cpu-alerts
   rules:
   - alert: HighCPULoad
-    expr: rate(container_cpu_usage_seconds_total{job="lab-backend"}[1m]) * 100 > 50
-    for: 1m
+    expr: changes(cpu_load_percent[30s]) > 0
+    for: 10s
     labels:
       severity: warning
     annotations:
-      summary: "High CPU load detected"
-      description: "CPU usage on lab-backend is above 50%"
+      summary: "CPU load detected"
+      description: "CPU load endpoint was activated"

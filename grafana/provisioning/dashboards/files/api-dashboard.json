@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "id": null,
-    "title": "Laboratorio Observabilidad - API",
+    "title": "Laboratorio API",
     "tags": ["api-rust", "lab-backend"],
     "timezone": "browser",
     "schemaVersion": 38,
@@ -9,10 +9,10 @@
     "panels": [
       {
         "type": "stat",
-        "title": "CPU Usage lab-backend (%)",
+        "title": "CPU Load (%)",
         "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
         "targets": [{
-          "expr": "rate(container_cpu_usage_seconds_total{job=\"lab-backend\"}[1m]) * 100",
+          "expr": "cpu_load_percent",
           "refId": "A"
         }]
       },
