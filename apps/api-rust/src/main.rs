@@ -85,6 +85,7 @@ async fn main() {
         .route("/my-elections", axum::routing::post(handlers::list_my_elections))
         .route("/load", axum::routing::get(handlers::load_cpu))
         .route("/saludar", axum::routing::get(handlers::greet))
+        .route("/alerts", axum::routing::post(handlers::alerts_webhook))
         .layer(TraceLayer::new_for_http())
         .layer(cors)
         .with_state(state);

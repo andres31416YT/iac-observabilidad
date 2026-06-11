@@ -702,3 +702,21 @@ pub async fn greet(
 
     Ok((StatusCode::OK, Json(ApiResponse::ok(response))))
 }
+
+pub async fn alerts_webhook(
+    State(state): State<Arc<Mutex<AppState>>>,
+    Json(payload): Json<serde_json::Value>,
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiResponse<String>>)> {
+    let state = state.lock().await;
+
+    info!(
+        service = "api-gateway",
+        event = "alert_received",
+        alert_payload = %payload,
+        "Grafana alert webhook received"
+    );
+
+    let _ = db::log_audit(&state.db_pool, "grafana_alert", &format!("{:?}", payload)).await;
+
+    Ok((StatusCode::OK, Json(ApiResponse::ok("Alert received".to_string()))))
+}
