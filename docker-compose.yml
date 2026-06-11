@@ -68,6 +68,7 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
       - prometheus-data:/prometheus
     networks:
       - voting-network
@@ -114,6 +115,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yaml
     volumes:
       - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - loki-data:/loki
     networks:
       - voting-network
     ports:
@@ -172,3 +174,4 @@ volumes:
   prometheus-data:
   grafana-data:
   postgres_data:
+  loki-data:

@@ -1,0 +1,34 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Laboratorio Observabilidad - API",
+    "tags": ["api-rust", "lab-backend"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "panels": [
+      {
+        "type": "stat",
+        "title": "CPU Usage lab-backend (%)",
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+        "targets": [{
+          "expr": "rate(container_cpu_usage_seconds_total{job=\"lab-backend\"}[1m]) * 100",
+          "refId": "A"
+        }]
+      },
+      {
+        "type": "logs",
+        "title": "API Logs (api-rust)",
+        "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+        "targets": [{
+          "expr": "{service=\"api-rust\"}",
+          "refId": "A"
+        }]
+      }
+    ]
+  },
+  "overwrite": true
+}
+    ]
+  }
+}
