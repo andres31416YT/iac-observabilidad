@@ -8,18 +8,18 @@ docker compose up -d --build
 ```
 
 ## Servicios y URLs
-| Servicio           | URL                              | Notas                                  |
-|--------------------|----------------------------------|----------------------------------------|
-| Frontend (TrueTally) | http://localhost:8080           | App de votación blockchain con botones de prueba |
-| API Gateway        | http://localhost:3002            | `/saludar`, `/load`, `/alerts`, `/metrics` |
-| Blockchain Node    | http://localhost:9944            | `/vote`, `/blocks`, `/health`          |
-| Grafana            | http://localhost:3003            | admin / admin                          |
-| Prometheus         | http://localhost:9090            | datasource provisionado                 |
-| Loki               | http://localhost:3100            | logs agregados por Alloy                 |
-| Alloy (UI)         | http://localhost:12345           | estado del recolector de logs            |
-| Blackbox Exporter  | http://localhost:9115/probe      | health checks HTTP                       |
-| cAdvisor           | http://localhost:8081/metrics    | métricas por contenedor                |
-| node-exporter      | http://localhost:9100/metrics   | métricas del host                      |
+| Servicio           | URL externa                     | URL interna (scrape)        | Notas                                  |
+|--------------------|----------------------------------|-----------------------------|----------------------------------------|
+| Frontend (TrueTally) | http://localhost:8080           | lab-frontend:3000           | App de votación blockchain con botones de prueba |
+| API Gateway        | http://localhost:3002          | host.docker.internal:3002   | `/saludar`, `/load`, `/alerts`, `/metrics` |
+| Blockchain Node    | http://localhost:9944          | host.docker.internal:9944   | `/vote`, `/blocks`, `/health`          |
+| Grafana            | http://localhost:3003          | lab-grafana:3000            | admin / admin                          |
+| Prometheus         | http://localhost:9090           | host.docker.internal:9090   | datasource provisionado                 |
+| Loki               | http://localhost:3100           | lab-loki:3100               | logs agregados por Alloy                 |
+| Alloy (UI)         | http://localhost:12345          | lab-alloy:12345             | estado del recolector de logs            |
+| Blackbox Exporter  | http://localhost:9115/probe     | host.docker.internal:9115   | health checks HTTP                       |
+| cAdvisor           | http://localhost:8081/metrics   | host.docker.internal:8081   | métricas por contenedor                |
+| node-exporter      | http://localhost:9100/metrics   | host.docker.internal:9100   | métricas del host                      |
 
 ## Endpoints nuevos (Laboratorio)
 | Endpoint           | Descripción                      |
