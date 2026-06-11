@@ -53,7 +53,7 @@ services:
     depends_on:
       - api-rust
     environment:
-      - NEXT_PUBLIC_API_URL=http://api-rust:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:3002
       - NODE_ENV=production
     networks:
       - voting-network
