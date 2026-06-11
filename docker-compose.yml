@@ -23,8 +23,6 @@ services:
     restart: unless-stopped
 
   api-gateway:
-    env_file:
-      - .env
     build:
       context: ./apps/api-rust
       dockerfile: Dockerfile

@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY Cargo.toml Cargo.lock ./
+COPY Cargo.toml ./
 COPY src ./src
+COPY ../Cargo.lock ./Cargo.lock
 
 RUN cargo build --release
 
