@@ -10,16 +10,29 @@ docker compose up -d --build
 ## Servicios y URLs
 | Servicio           | URL                              | Notas                                  |
 |--------------------|----------------------------------|----------------------------------------|
-| Frontend (TrueTally) | http://localhost:3000           | App de votación blockchain             |
-| API Gateway        | http://localhost:8080            | `/auth`, `/elections`, `/metrics`       |
+| Frontend (TrueTally) | http://localhost:8080           | App de votación blockchain con botones de prueba |
+| API Gateway        | http://localhost:3002            | `/saludar`, `/load`, `/alerts`, `/metrics` |
 | Blockchain Node    | http://localhost:9944            | `/vote`, `/blocks`, `/health`          |
-| Grafana            | http://localhost:3001            | admin / admin                          |
+| Grafana            | http://localhost:3003            | admin / admin                          |
 | Prometheus         | http://localhost:9090            | datasource provisionado                 |
 | Loki               | http://localhost:3100            | logs agregados por Alloy                 |
 | Alloy (UI)         | http://localhost:12345           | estado del recolector de logs            |
 | Blackbox Exporter  | http://localhost:9115/probe      | health checks HTTP                       |
 | cAdvisor           | http://localhost:8081/metrics    | métricas por contenedor                |
-| node-exporter      | http://localhost:9100/metrics    | métricas del host                      |
+| node-exporter      | http://localhost:9100/metrics   | métricas del host                      |
+
+## Endpoints nuevos (Laboratorio)
+| Endpoint           | Descripción                      |
+|--------------------|----------------------------------|
+| `/saludar`         | Retorna saludo de prueba         |
+| `/load?seconds=N`  | Genera carga CPU ~30% por N segundos |
+| `/alerts`          | Webhook para alertas de Grafana    |
+
+## Alertas configuradas
+- **HighCPULoad**: Dispara cuando CPU de lab-backend supera 50% por 1 minuto
+
+## Dashboards
+- **Laboratorio API**: Panel con CPU usage y logs del backend
 
 ## Endpoints de métricas
 | Servicio           | Endpoint                 | Tipo        |
@@ -39,7 +52,7 @@ Formato JSON estructurado con campos:
 - `event`: tipo de evento (http_request, db_connection_success, etc.)
 - `path`, `method`, `status`: para requests HTTP
 
-Los logs se envían a Loki vía Alloy y pueden visualizarse en Grafana.
+Los logs se envían a Loki vía Alloy con label `tier="application"` y pueden visualizarse en Grafana.
 
 ## Reset
 ```bash
