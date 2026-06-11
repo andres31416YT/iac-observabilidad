@@ -26,7 +26,7 @@ services:
     build:
       context: ./apps/api-rust
       dockerfile: Dockerfile
-    container_name: lab-api-gateway
+    container_name: lab-backend
     depends_on:
       - blockchain-node
       - database-aux
@@ -62,7 +62,7 @@ services:
     depends_on:
       - api-gateway
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_API_URL=http://lab-backend:8080
       - NODE_ENV=production
     networks:
       - voting-network

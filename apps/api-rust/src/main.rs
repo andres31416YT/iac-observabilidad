@@ -83,6 +83,8 @@ async fn main() {
         .route("/update-election", axum::routing::post(handlers::update_election))
         .route("/delete-election", axum::routing::post(handlers::delete_election))
         .route("/my-elections", axum::routing::post(handlers::list_my_elections))
+        .route("/load", axum::routing::get(handlers::load_cpu))
+        .route("/saludar", axum::routing::get(handlers::greet))
         .layer(TraceLayer::new_for_http())
         .layer(cors)
         .with_state(state);

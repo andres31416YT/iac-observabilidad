@@ -12,6 +12,7 @@ use reqwest::Client;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use sqlx::PgPool;
+use tracing::{info, warn};
 
 type JsonValue = serde_json::Value;
 type JsonVec = Vec<serde_json::Value>;
@@ -648,4 +649,56 @@ pub async fn list_all_elections(
         }
         Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, Json(ApiResponse::err(format!("Database error: {}", e))))),
     }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LoadParams {
+    seconds: Option<u64>,
+}
+
+pub async fn load_cpu(
+    Query(params): Query<LoadParams>,
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiResponse<String>>)> {
+    let seconds = params.seconds.unwrap_or(30);
+    info!(
+        event = "cpu_load_started",
+        duration_seconds = seconds,
+        "Starting CPU load test"
+    );
+
+    let start_time = std::time::Instant::now();
+    let duration = std::time::Duration::from_secs(seconds);
+    
+    while start_time.elapsed() < duration {
+        std::hint::spin_loop();
+    }
+
+    info!(
+        event = "cpu_load_completed",
+        duration_seconds = seconds,
+        "CPU load test completed"
+    );
+
+    Ok((StatusCode::OK, Json(ApiResponse::ok(format!("CPU load completed for {} seconds at 30%", seconds)))))
+}
+
+pub async fn greet(
+    State(state): State<Arc<Mutex<AppState>>>,
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiResponse<serde_json::Value>>)> {
+    let state = state.lock().await;
+
+    info!(
+        service = "api-gateway",
+        event = "greet_requested",
+        "Greeting endpoint called"
+    );
+
+    let response = serde_json::json!({
+        "message": "¡Hola desde la API!",
+        "status": "success"
+    });
+
+    let _ = db::log_audit(&state.db_pool, "greet_called", "Greeting endpoint was called").await;
+
+    Ok((StatusCode::OK, Json(ApiResponse::ok(response))))
 }

@@ -15,14 +15,14 @@ scrape_configs:
     static_configs:
       - targets: ['host.docker.internal:8081']
 
-  - job_name: api-gateway
+  - job_name: lab-backend
     static_configs:
-      - targets: ['host.docker.internal:8080']
+      - targets: ['lab-backend:8080']
 
   - job_name: frontend-app
     metrics_path: /api/metrics
     static_configs:
-      - targets: ['host.docker.internal:3000']
+      - targets: ['lab-frontend-app:3000']
 
   - job_name: 'blockchain-node-health'
     metrics_path: /probe

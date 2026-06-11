@@ -188,6 +188,12 @@ export const api = {
       body: JSON.stringify(auth),
     }),
 
+  greet: () =>
+    fetchApi<any>('/saludar', { method: 'GET' }),
+
+  loadCpu: (seconds?: number) =>
+    fetchApi<string>(`/load${seconds ? `?seconds=${seconds}` : ''}`, { method: 'GET' }),
+
   createElection: (election: NewElection) =>
     fetchApi<string>('/elections', {
       method: 'POST',

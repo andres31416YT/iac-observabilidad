@@ -172,6 +172,10 @@ export default function VotingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [greetingMsg, setGreetingMsg] = useState<string | null>(null);
+  const [loadingCpu, setLoadingCpu] = useState(false);
+  const [cpuMsg, setCpuMsg] = useState<string | null>(null);
+
   const [authMode, setAuthMode] = useState<'login' | 'register'>(pathname === '/register' ? 'register' : 'login');
   const [authData, setAuthData] = useState({
     email: '',
@@ -690,6 +694,27 @@ export default function VotingPage() {
     setStep('home');
   };
 
+
+  const handleGreet = async () => {
+    const res = await api.greet();
+    if (res.success && res.data) {
+      setGreetingMsg((res.data as any).message || JSON.stringify(res.data));
+    } else {
+      setGreetingMsg(res.error || 'Error al saludar');
+    }
+  };
+
+  const handleLoadCpu = async () => {
+    setLoadingCpu(true);
+    setCpuMsg(null);
+    const res = await api.loadCpu(30);
+    if (res.success) {
+      setCpuMsg(res.data || 'CPU load completado');
+    } else {
+      setCpuMsg(res.error || 'Error en carga CPU');
+    }
+    setLoadingCpu(false);
+  };
   const isAdmin = session?.role === 'admin' || session?.role === 'sudo_admin';
   const canVote = session && session.public_key && (!session.has_voted_election || session.has_voted_election !== selectedElection?.id);
 
@@ -801,6 +826,31 @@ export default function VotingPage() {
         {step === 'home' && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
+
+            <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+              <h3 className="text-lg font-semibold mb-3">Laboratorio Observabilidad</h3>
+              <div className="flex gap-4 mb-2">
+                <button
+                  onClick={handleGreet}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Saludar (API)
+                </button>
+                <button
+                  onClick={handleLoadCpu}
+                  disabled={loadingCpu}
+                  className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 disabled:bg-gray-400"
+                >
+                  {loadingCpu ? "Cargando CPU..." : "Sobrecargar CPU (30s)"}
+                </button>
+              </div>
+              {greetingMsg && (
+                <p className="text-green-600 mt-2">Respuesta: {greetingMsg}</p>
+              )}
+              {cpuMsg && (
+                <p className="text-orange-600 mt-2">Estado: {cpuMsg}</p>
+              )}
+            </div>
               <h2 className="text-xl font-semibold">Votaciones</h2>
               {isAdmin && (
                 <button
