@@ -44,9 +44,14 @@ services:
     container_name: lab-node-exporter
     command:
       - "--path.rootfs=/host"
+      - "--collector.filesystem.mount-points-exclude=^/parent-distro/mnt/host/wsl|^/run/desktop/mnt/host/wsl|^/mnt/host/wsl"
     pid: host
+    privileged: true
     volumes:
-      - /:/host:ro,rslave
+      - type: bind
+        source: /
+        target: /host
+        read_only: true
     ports:
       - "9100:9100"
     restart: unless-stopped
