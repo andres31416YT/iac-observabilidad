@@ -1,13 +1,34 @@
 {
-  "name": "lab-frontend",
-  "version": "1.0.0",
-  "description": "Frontend Hello World instrumentado para el laboratorio de observabilidad",
-  "main": "server.js",
+  "name": "truetally-frontend",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "docker:build": "docker build -t truetally-frontend .",
+    "docker:up": "docker compose up frontend-app",
+    "docker:down": "docker compose down frontend-app"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "prom-client": "^15.1.3"
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.312.0",
+    "axios": "^1.6.5",
+    "clsx": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3",
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.33",
+    "autoprefixer": "^10.4.17"
   }
 }

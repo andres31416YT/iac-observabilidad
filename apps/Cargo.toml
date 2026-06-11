@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "api-rust",
+    "blockchain-core",
+]
+resolver = "2"
