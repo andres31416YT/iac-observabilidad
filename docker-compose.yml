@@ -1,44 +1,35 @@
-# Laboratorio de Observabilidad — Infraestructura como Código
-# Levanta apps (api-gateway + blockchain-node + frontend-app) y el stack completo: Prometheus, Loki,
-# Alloy, Grafana, node-exporter y cAdvisor.
-#
-#   docker compose up -d --build      # levantar todo
-#   docker compose down               # detener (conserva dashboards de Grafana)
-#   docker compose down -v            # detener y borrar datos (reset total)
-
 services:
-  # ----------------------------- Aplicaciones Voting -----------------------------
-  blockchain-node:
+  blockchain-core:
     build:
       context: ./apps/blockchain-core
       dockerfile: Dockerfile
-    container_name: lab-blockchain-node
+    container_name: lab-blockchain-core
     volumes:
       - ./apps/blockchain-core/data:/data/db
     networks:
       - voting-network
     ports:
-      - "30333:30333" # P2P para otros nodos
-      - "9944:9944" # RPC/WebSocket para la API
+      - "30333:50333"
+      - "9944:9944"
     restart: unless-stopped
 
-  api-gateway:
+  api-rust:
     build:
       context: ./apps/api-rust
       dockerfile: Dockerfile
     container_name: lab-backend
     depends_on:
-      - blockchain-node
+      - blockchain-core
       - database-aux
     environment:
       - DATABASE_URL=postgres://user:pass@database-aux:5432/voting_db
-      - NODE_RPC_URL=http://blockchain-node:9944
+      - NODE_RPC_URL=http://blockchain-core:9944
       - RUST_LOG=info
       - RUST_BACKTRACE=1
     networks:
       - voting-network
     ports:
-      - "8080:8080"
+      - "3002:8080"
     restart: always
 
   database-aux:
@@ -54,23 +45,22 @@ services:
       - voting-network
     restart: always
 
-  frontend-app:
+  frontend:
     build:
       context: ./apps/frontend
       dockerfile: Dockerfile
-    container_name: lab-frontend-app
+    container_name: lab-frontend
     depends_on:
-      - api-gateway
+      - api-rust
     environment:
-      - NEXT_PUBLIC_API_URL=http://lab-backend:8080
+      - NEXT_PUBLIC_API_URL=http://api-rust:8080
       - NODE_ENV=production
     networks:
       - voting-network
     ports:
-      - "3000:3000"
+      - "8080:3000"
     restart: always
 
-  # ----------------------------- Métricas -----------------------------
   prometheus:
     image: prom/prometheus:v3.8.1
     container_name: lab-prometheus
@@ -118,7 +108,6 @@ services:
       - "8081:8080"
     restart: unless-stopped
 
-  # ----------------------------- Logs -----------------------------
   loki:
     image: grafana/loki:3.4.0
     container_name: lab-loki
@@ -149,7 +138,6 @@ services:
       - loki
     restart: unless-stopped
 
-  # ----------------------------- Visualización -----------------------------
   grafana:
     image: grafana/grafana:12.4.0
     container_name: lab-grafana
@@ -163,7 +151,7 @@ services:
     networks:
       - voting-network
     ports:
-      - "3001:3000"
+      - "3003:3000"
     depends_on:
       - prometheus
       - loki

@@ -17,12 +17,12 @@ scrape_configs:
 
   - job_name: lab-backend
     static_configs:
-      - targets: ['lab-backend:8080']
+      - targets: ['host.docker.internal:3002']
 
   - job_name: frontend-app
     metrics_path: /api/metrics
     static_configs:
-      - targets: ['lab-frontend-app:3000']
+      - targets: ['lab-frontend:3000']
 
   - job_name: 'blockchain-node-health'
     metrics_path: /probe

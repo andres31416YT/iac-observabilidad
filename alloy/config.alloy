@@ -28,10 +28,10 @@ discovery.relabel "containers" {
     replacement  = "infrastructure"
   }
 
-  // backend/frontend se marcan como aplicación
+  // api-rust/blockchain-core/frontend se marcan como aplicación
   rule {
-    source_labels = ["__meta_docker_container_name"]
-    regex         = "/(lab-blockchain-node|lab-api-gateway|lab-frontend-app)"
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    regex         = "^(api-rust|blockchain-core|frontend)$"
     target_label  = "tier"
     replacement   = "application"
   }
