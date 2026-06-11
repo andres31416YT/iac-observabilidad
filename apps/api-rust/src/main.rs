@@ -1,7 +1,7 @@
-use api_gateway::{handlers, init_db, AuthRequest, logging};
+use api_gateway::{handlers, init_db, AuthRequest, logging, metrics_handler};
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::{cors::{Any, CorsLayer}, trace::TraceLayer};
 use axum::{Router, serve};
 use tracing::{error, info};
 
@@ -61,6 +61,7 @@ async fn main() {
         .allow_headers(Any);
     
     let app = Router::new()
+        .route("/metrics", axum::routing::get(metrics_handler::metrics_handler))
         .route("/health", axum::routing::get(handlers::health_check))
         .route("/auth", axum::routing::post(handlers::authenticate))
         .route("/register-user", axum::routing::post(handlers::register))
@@ -82,6 +83,7 @@ async fn main() {
         .route("/update-election", axum::routing::post(handlers::update_election))
         .route("/delete-election", axum::routing::post(handlers::delete_election))
         .route("/my-elections", axum::routing::post(handlers::list_my_elections))
+        .layer(TraceLayer::new_for_http())
         .layer(cors)
         .with_state(state);
     
