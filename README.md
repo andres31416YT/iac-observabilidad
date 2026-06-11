@@ -25,11 +25,11 @@ docker compose up -d --build
 | Endpoint           | Descripción                      |
 |--------------------|----------------------------------|
 | `/saludar`         | Retorna saludo de prueba         |
-| `/load?seconds=N`  | Genera carga CPU ~30% por N segundos |
+| `/load?seconds=N`  | Genera carga CPU ~55% por N segundos (por defecto 35s) |
 | `/alerts`          | Webhook para alertas de Grafana    |
 
 ## Alertas configuradas
-- **HighCPULoad**: Detecta cuando el endpoint `/load` es activado (métrica `cpu_load_percent`)
+- **HighCPULoad**: Dispara cuando CPU > 50% **durante 30 segundos continuos**
 
 ## Dashboards
 - **Laboratorio API**: Panel con CPU usage y logs del backend

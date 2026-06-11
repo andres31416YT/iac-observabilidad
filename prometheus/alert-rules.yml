@@ -2,10 +2,10 @@ groups:
 - name: cpu-alerts
   rules:
   - alert: HighCPULoad
-    expr: changes(cpu_load_percent[30s]) > 0
-    for: 10s
+    expr: cpu_load_percent > 50
+    for: 30s
     labels:
       severity: warning
     annotations:
-      summary: "CPU load detected"
-      description: "CPU load endpoint was activated"
+      summary: "High CPU load detected"
+      description: "CPU load exceeded 50% for 30 seconds"

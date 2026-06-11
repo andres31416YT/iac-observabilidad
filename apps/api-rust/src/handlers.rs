@@ -673,7 +673,7 @@ pub async fn load_cpu(
         "Starting CPU load test"
     );
 
-    CPU_USAGE.set(30);
+    CPU_USAGE.set(55);
 
     let start_time = std::time::Instant::now();
     let duration = std::time::Duration::from_secs(seconds);

@@ -707,7 +707,7 @@ export default function VotingPage() {
   const handleLoadCpu = async () => {
     setLoadingCpu(true);
     setCpuMsg(null);
-    const res = await api.loadCpu(30);
+    const res = await api.loadCpu(35);
     if (res.success) {
       setCpuMsg(res.data || 'CPU load completado');
     } else {
