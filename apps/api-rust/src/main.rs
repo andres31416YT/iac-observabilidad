@@ -1,10 +1,9 @@
-use api_gateway::{handlers, init_db, AuthRequest};
+use api_gateway::{handlers, init_db, AuthRequest, logging};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
 use axum::{Router, serve};
 use tracing::{error, info};
-use crate::logging;
 
 #[tokio::main]
 async fn main() {

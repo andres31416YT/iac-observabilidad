@@ -1,7 +1,7 @@
 # Multi-stage build: Rust binary in distroless image
-FROM rust:1.75-alpine AS builder
+FROM rust:latest AS builder
 
-RUN apk add --no-cache musl-dev openssl-dev pkgconfig
+RUN apt-get update && apt-get install -y musl-tools libssl-dev pkg-config
 
 WORKDIR /app
 
