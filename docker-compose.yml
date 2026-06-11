@@ -79,6 +79,8 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+    networks:
+      - voting-network
     ports:
       - "9090:9090"
     restart: unless-stopped
@@ -123,6 +125,8 @@ services:
     command: -config.file=/etc/loki/loki-config.yaml
     volumes:
       - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+    networks:
+      - voting-network
     ports:
       - "3100:3100"
     restart: unless-stopped
@@ -137,6 +141,8 @@ services:
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - voting-network
     ports:
       - "12345:12345"
     depends_on:
@@ -154,11 +160,20 @@ services:
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - grafana-data:/var/lib/grafana
+    networks:
+      - voting-network
     ports:
       - "3001:3000"
     depends_on:
       - prometheus
       - loki
+    restart: unless-stopped
+
+  blackbox-exporter:
+    image: quay.io/prometheus/blackbox-exporter:v0.26.0
+    container_name: lab-blackbox-exporter
+    ports:
+      - "9115:9115"
     restart: unless-stopped
 
 networks:
