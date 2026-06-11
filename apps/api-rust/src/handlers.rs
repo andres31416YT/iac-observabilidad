@@ -700,7 +700,10 @@ pub async fn greet(
 
     info!(
         service = "api-gateway",
-        event = "greet_requested",
+        event = "http_request",
+        method = "GET",
+        path = "/saludar",
+        status = 200,
         "Greeting endpoint called"
     );
 

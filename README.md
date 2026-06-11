@@ -45,14 +45,14 @@ docker compose up -d --build
 | cAdvisor           | `/metrics`               | métricas de contenedor |
 
 ## Estandar de logs
-Formato JSON estructurado con campos:
+Formato JSON estructurado con campos obligatorios:
 - `timestamp`: RFC3339
-- `level`: INFO/WARN/ERROR
+- `level`: INFO/WARN/ERROR  
 - `service`: nombre del servicio
-- `event`: tipo de evento (http_request, db_connection_success, etc.)
-- `path`, `method`, `status`: para requests HTTP
+- `event`: tipo de evento (http_request, cpu_load_started, greet_requested, etc.)
+- `method`, `path`, `status`: para requests HTTP
 
-Los logs se envían a Loki vía Alloy con label `tier="application"` y pueden visualizarse en Grafana.
+Los logs se envían a Loki vía Alloy y pueden visualizarse en Grafana.
 
 ## Reset
 ```bash

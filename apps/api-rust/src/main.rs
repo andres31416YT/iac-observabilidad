@@ -2,7 +2,7 @@ use api_gateway::{handlers, init_db, AuthRequest, logging, metrics_handler};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tower_http::{cors::{Any, CorsLayer}, trace::TraceLayer};
-use axum::{Router, serve};
+use axum::{Router, serve, http::Request, response::Response, body::Body};
 use tracing::{error, info};
 
 #[tokio::main]
