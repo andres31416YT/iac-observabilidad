@@ -15,12 +15,11 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:8080']
 
-  - job_name: backend
-    metrics_path: /metrics
+  - job_name: api-gateway
+    metrics_path: /health
     static_configs:
-      - targets: ['backend:3001']
+      - targets: ['api-gateway:8080']
 
-  - job_name: frontend
-    metrics_path: /metrics
+  - job_name: blockchain-node
     static_configs:
-      - targets: ['frontend:8080']
+      - targets: ['blockchain-node:9944']

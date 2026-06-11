@@ -1,5 +1,5 @@
 # Laboratorio de Observabilidad — Infraestructura como Código
-# Levanta apps (backend + frontend) y el stack completo: Prometheus, Loki,
+# Levanta apps (api-gateway + blockchain-node + frontend-app) y el stack completo: Prometheus, Loki,
 # Alloy, Grafana, node-exporter y cAdvisor.
 #
 #   docker compose up -d --build      # levantar todo
@@ -7,24 +7,70 @@
 #   docker compose down -v            # detener y borrar datos (reset total)
 
 services:
-  # ----------------------------- Aplicaciones -----------------------------
-  backend:
-    build: ./apps/backend
-    container_name: lab-backend
+  # ----------------------------- Aplicaciones Voting -----------------------------
+  blockchain-node:
+    build:
+      context: ./apps/blockchain-core
+      dockerfile: Dockerfile
+    container_name: lab-blockchain-node
+    volumes:
+      - ./apps/blockchain-core/data:/data/db
+    networks:
+      - voting-network
     ports:
-      - "3001:3001"
+      - "30333:30333" # P2P para otros nodos
+      - "9944:9944" # RPC/WebSocket para la API
     restart: unless-stopped
 
-  frontend:
-    build: ./apps/frontend
-    container_name: lab-frontend
+  api-gateway:
+    env_file:
+      - .env
+    build:
+      context: ./apps/api-rust
+      dockerfile: Dockerfile
+    container_name: lab-api-gateway
+    depends_on:
+      - blockchain-node
+      - database-aux
     environment:
-      - BACKEND_URL=http://backend:3001
+      - DATABASE_URL=postgres://user:pass@database-aux:5432/voting_db
+      - NODE_RPC_URL=http://blockchain-node:9944
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+    networks:
+      - voting-network
     ports:
       - "8080:8080"
+    restart: always
+
+  database-aux:
+    image: postgres:16-alpine
+    container_name: lab-database-aux
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: voting_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - voting-network
+    restart: always
+
+  frontend-app:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: lab-frontend-app
     depends_on:
-      - backend
-    restart: unless-stopped
+      - api-gateway
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NODE_ENV=production
+    networks:
+      - voting-network
+    ports:
+      - "3000:3000"
+    restart: always
 
   # ----------------------------- Métricas -----------------------------
   prometheus:
@@ -111,12 +157,17 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - grafana-data:/var/lib/grafana
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - prometheus
       - loki
     restart: unless-stopped
 
+networks:
+  voting-network:
+    driver: bridge
+
 volumes:
   prometheus-data:
   grafana-data:
+  postgres_data:

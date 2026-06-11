@@ -31,7 +31,7 @@ discovery.relabel "containers" {
   // backend/frontend se marcan como aplicación
   rule {
     source_labels = ["__meta_docker_container_name"]
-    regex         = "/(lab-backend|lab-frontend)"
+    regex         = "/(lab-blockchain-node|lab-api-gateway|lab-frontend-app)"
     target_label  = "tier"
     replacement   = "application"
   }
