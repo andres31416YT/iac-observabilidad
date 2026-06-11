@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "shared",
+    "lambda-acceso",
+    "lambda-despachador",
+    "lambda-procesador",
+    "api-rust",
+    "blockchain-core",
+]
+resolver = "2"

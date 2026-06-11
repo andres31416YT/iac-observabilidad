@@ -1,0 +1,77 @@
+services:
+  # --- ROL: INTEGRANTE A y B (Core & Lógica) ---
+  blockchain-node:
+    build:
+      context: ./blockchain-core
+      dockerfile: Dockerfile
+    container_name: blockchain_node
+    volumes:
+      - ./blockchain-core/data:/data/db
+    networks:
+      - voting-network
+    ports:
+      - "30333:30333" # P2P para otros nodos
+      - "9944:9944" # RPC/WebSocket para la API
+    restart: unless-stopped
+
+  # --- ROL: INTEGRANTE C (API & Conector) ---
+  api-gateway:
+    env_file:
+      - .env
+    build:
+      context: ./api-rust
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    depends_on:
+      - blockchain-node
+      - database-aux
+    environment:
+      - DATABASE_URL=postgres://user:pass@database-aux:5432/voting_db
+      - NODE_RPC_URL=http://blockchain-node:9944
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+    networks:
+      - voting-network
+    ports:
+      - "8080:8080"
+    restart: always
+
+  # --- ROL: INTEGRANTE C (Persistencia Auxiliar) ---
+  database-aux:
+    image: postgres:16-alpine
+    container_name: database_aux
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: voting_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - voting-network
+    ports:
+      - "5432:5432"
+    restart: always
+
+  # --- ROL: INTEGRANTE D (Frontend & UI) ---
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_app
+    depends_on:
+      - api-gateway
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NODE_ENV=production
+    networks:
+      - voting-network
+    ports:
+      - "3000:3000"
+    restart: always
+
+networks:
+  voting-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
